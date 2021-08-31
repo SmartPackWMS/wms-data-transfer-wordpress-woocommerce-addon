@@ -1,0 +1,22 @@
+{
+    "name": "smartpack/wordpress-woocommerce-plugin",
+    "description": "WordPress SmartPack plugin to WooCommerce with full integration to smartpack.dk system.",
+    "type": "wordpress-plugin",
+    "keywords": ["wordpress", "plugin"],
+    "homepage": "https://github.com/SmartPackWMS/wordpress-woocommerce-plugin",
+    "authors": [
+        {
+            "name": "Paris Nakita Kejser",
+            "email": "hi@pnk.sh",
+            "homepage": "https://www.pnk.sh"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wcsh\\": "src"
+        }
+    }
+}
