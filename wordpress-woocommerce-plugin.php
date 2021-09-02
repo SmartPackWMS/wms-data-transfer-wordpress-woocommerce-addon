@@ -8,7 +8,11 @@
  * Author URI: https://smartpack.dk
  */
 
-define('WCSH_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('SMARTPACK_WMS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 // adding src folder files
 require_once 'src/helpers/helpers.php';
+require_once 'src/Controllers/AdminSettingsPage_Controller.php';
+
+$adminSettingsPageController = new SmartPack\WMS\Controllers\AdminSettingsPage_Controller();
+$adminSettingsPageController->init();
