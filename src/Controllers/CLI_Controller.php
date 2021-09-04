@@ -2,8 +2,6 @@
 
 namespace SmartPack\WMS\Controllers;
 
-require_once 'CLI/Product_Controller.php';
-
 use SmartPack\WMS\Controllers\CLI\CLI_Products;
 
 class CLI

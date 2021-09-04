@@ -12,8 +12,13 @@ define('SMARTPACK_WMS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 // adding src folder files
 require_once 'src/helpers/helpers.php';
+require_once 'src/Controllers/WPInit_Controller.php';
 require_once 'src/Controllers/AdminSettingsPage_Controller.php';
 require_once 'src/Controllers/CLI_Controller.php';
+require_once 'src/Controllers/CLI/Product_Controller.php';
+
+$wpInitController = new SmartPack\WMS\Controllers\WPInit_Controller();
+$wpInitController->init();
 
 $adminSettingsPageController = new SmartPack\WMS\Controllers\AdminSettingsPage_Controller();
 $adminSettingsPageController->init();
