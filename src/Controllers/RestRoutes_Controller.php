@@ -36,8 +36,33 @@ class RestRoutes_Controller extends WP_REST_Controller
 
     public function stockChanged(WP_REST_Request $request)
     {
+        $data = json_decode($request->get_body());
+
+        $product_stock_updated = [];
+        foreach ($data as $key => $val) {
+            $product_id = wc_get_product_id_by_sku($val->sku);
+
+            $product_stock_updated[$val->sku] = [
+                'id' => $product_id,
+                'stock' => $val->totalCombined
+            ];
+
+            $product = new \WC_Product($product_id);
+            $product->set_manage_stock(true);
+            $product->save();
+
+            wc_update_product_stock($product_id, $val->totalCombined);
+        }
+
         return new WP_REST_Response([
-            'test' => 'demo'
+            'content' => $product_stock_updated
         ]);
+    }
+
+    public function init()
+    {
+        add_action('rest_api_init', function () {
+            $this->register_routes();
+        });
     }
 }

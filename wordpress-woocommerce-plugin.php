@@ -20,10 +20,8 @@ require_once 'src/Controllers/CLI_Controller.php';
 require_once 'src/Controllers/CLI/Product_Controller.php';
 require_once 'src/Controllers/RestRoutes_Controller.php';
 
-add_action('rest_api_init', function () {
-    $restController = new SmartPack\WMS\Controllers\RestRoutes_Controller();
-    $restController->register_routes();
-});
+$restController = new SmartPack\WMS\Controllers\RestRoutes_Controller();
+$restController->init();
 
 $wpInitController = new SmartPack\WMS\Controllers\WPInit_Controller();
 $wpInitController->init();
