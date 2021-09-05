@@ -12,6 +12,7 @@ class RestRoutes_Controller extends WP_REST_Controller
 {
     const PLUGIN_PREFIX = 'smartpack-wms';
     const API_VERSION = 'v1';
+    const OPTION_NAME = 'smartpack_wms_plugin_settings';
 
     const ROUTES = [
         'stockChanged'      => '/stock-changed',
@@ -37,6 +38,23 @@ class RestRoutes_Controller extends WP_REST_Controller
     public function stockChanged(WP_REST_Request $request)
     {
         $data = json_decode($request->get_body());
+        $beartoken = $request->get_header('Authorization');
+
+        # Token access check
+        if (!$beartoken) {
+            return new WP_REST_Response([
+                'msg' => 'Beartoken access key is not valid'
+            ], 403);
+        } else {
+            $setting = get_option(self::OPTION_NAME);
+            $beartoken = str_replace('Bearer ', '', $beartoken);
+            if ($setting['webhook_key'] !== $beartoken) {
+                return new WP_REST_Response([
+                    'msg' => 'Beartoken access key is not valid'
+                ], 403);
+            }
+        }
+
 
         $product_stock_updated = [];
         foreach ($data as $key => $val) {
