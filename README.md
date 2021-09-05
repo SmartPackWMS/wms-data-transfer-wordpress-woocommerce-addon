@@ -6,3 +6,9 @@ Hooks Smartpack WMS need endpoints to update different data for product, stock a
 **Stock changed webhook**
 
 /wp-json/smartpack-wms/v1/stock-changed
+
+# Module Featuers
+**WMS**
+
+- Stock
+  - Hook: update product stock on hook signals
