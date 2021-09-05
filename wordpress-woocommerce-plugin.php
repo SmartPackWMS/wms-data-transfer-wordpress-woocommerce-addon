@@ -12,10 +12,18 @@ define('SMARTPACK_WMS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 // adding src folder files
 require_once 'src/helpers/helpers.php';
+require_once 'src/Controllers/WMSApi/APIService.php';
+require_once 'src/Controllers/WMSApi/Items.php';
 require_once 'src/Controllers/WPInit_Controller.php';
 require_once 'src/Controllers/AdminSettingsPage_Controller.php';
 require_once 'src/Controllers/CLI_Controller.php';
 require_once 'src/Controllers/CLI/Product_Controller.php';
+require_once 'src/Controllers/Rest_Controller.php';
+
+add_action('rest_api_init', function () {
+    $restController = new SmartPack\WMS\Controllers\Rest_Controller();
+    $restController->register_routes();
+});
 
 $wpInitController = new SmartPack\WMS\Controllers\WPInit_Controller();
 $wpInitController->init();
