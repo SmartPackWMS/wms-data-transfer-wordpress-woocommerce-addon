@@ -4,7 +4,7 @@ namespace SmartPack\WMS\Controllers;
 
 class AdminSettingsPage_Controller
 {
-    private $_prefix = 'smartpack_wms_';
+    private $_prefix = 'smartpack_wms_plugin_';
 
     function init()
     {
@@ -45,8 +45,8 @@ class AdminSettingsPage_Controller
                 function () use ($options) {
                     echo '<input 
                         type="text" 
-                        name="' . $this->_prefix . 'settings[wms_api_url]" 
-                        value="' . ($options['wms_api_url'] ?? '') . '">
+                        name="' . $this->_prefix . 'settings[endpoint]" 
+                        value="' . ($options['endpoint'] ?? '') . '">
                     ';
                 },
                 'pluginPage',
@@ -59,7 +59,7 @@ class AdminSettingsPage_Controller
                 function () use ($options) {
                     echo '<input 
                         type="text" 
-                        name="' . $this->_prefix . 'settings[wms_api_username]" 
+                        name="' . $this->_prefix . 'settings[username]" 
                         value="' . ($options['username'] ?? '') . '">
                     ';
                 },
@@ -73,8 +73,22 @@ class AdminSettingsPage_Controller
                 function () use ($options) {
                     echo '<input 
                         type="text" 
-                        name="' . $this->_prefix . 'settings[wms_api_password]" 
+                        name="' . $this->_prefix . 'settings[password]" 
                         value="' . ($options['password'] ??  '') . '">
+                    ';
+                },
+                'pluginPage',
+                $this->_prefix . 'pluginPage_section'
+            );
+
+            add_settings_field(
+                'webhook_key',
+                __('Webhook Beartoken Access Key', 'smartpack_wms'),
+                function () use ($options) {
+                    echo '<input 
+                        type="text" 
+                        name="' . $this->_prefix . 'settings[webhook_key]" 
+                        value="' . ($options['webhook_key'] ??  '') . '">
                     ';
                 },
                 'pluginPage',
