@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace SmartPack\WMS\Helpers;
 

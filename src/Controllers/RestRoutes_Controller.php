@@ -8,7 +8,7 @@ use WP_REST_Response;
 use WP_REST_Server;
 use GuzzleHttp\Exception\RequestException;
 
-class REST extends WP_REST_Controller
+class RestRoutes_Controller extends WP_REST_Controller
 {
     const PLUGIN_PREFIX = 'smartpack-wms';
     const API_VERSION = 'v1';
