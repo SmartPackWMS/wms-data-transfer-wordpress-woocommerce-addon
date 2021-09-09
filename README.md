@@ -11,9 +11,9 @@ Hooks Smartpack WMS need endpoints to update different data for product, stock a
 **WMS**
 
 - Product
-  - CLI: Full sync of products from shop to WMS integration
-  - Cron: sync product changes from shop to WMS integration
+  - [in-process] CLI: Full sync of products from shop to WMS integration
+  - [coming] Cron: sync product changes from shop to WMS integration
 - Order
-  - CLI: Sync all with shipment status
+  - [coming] CLI: Sync all with shipment status
 - Stock
   - Hook: update product stock on hook signals
