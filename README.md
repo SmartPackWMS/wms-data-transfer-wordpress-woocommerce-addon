@@ -7,12 +7,19 @@ Hooks Smartpack WMS need endpoints to update different data for product, stock a
 
 /wp-json/smartpack-wms/v1/stock-changed
 
+
+## Crontab
+You need to be enable to use cronjob to sync data between SmartPack WMS and Woocommerce. We are using CLI tools inside the cron so we are sure its react in the same way when you execute your code.
+
+``` bash
+* * * * * /path/to/woocommerce wp smartpack:product:sync
+```
+
 ## Module Featuers
 **WMS**
 
 - Product
-  - [in-process] CLI: Full sync of products from shop to WMS integration
-  - [coming] Cron: sync product changes from shop to WMS integration
+  - CLI: Full sync of products from shop to WMS integration
 - Order
   - [coming] CLI: Sync all with shipment status
 - Stock
