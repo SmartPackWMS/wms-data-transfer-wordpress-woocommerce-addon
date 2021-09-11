@@ -20,6 +20,7 @@ require_once 'src/Controllers/WPInit_Controller.php';
 require_once 'src/Controllers/AdminSettingsPage_Controller.php';
 require_once 'src/Controllers/CLI_Controller.php';
 require_once 'src/Controllers/CLI/Product_Controller.php';
+require_once 'src/Controllers/CLI/Order_Controller.php';
 require_once 'src/Controllers/RestRoutes_Controller.php';
 
 $restController = new SmartPack\WMS\Controllers\RestRoutes_Controller();
