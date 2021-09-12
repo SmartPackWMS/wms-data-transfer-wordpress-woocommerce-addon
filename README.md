@@ -14,6 +14,7 @@ You need to be enable to use cronjob to sync data between SmartPack WMS and Wooc
 ``` bash
 * * * * * /path/to/woocommerce wp smartpack:product:sync
 * * * * * /path/to/woocommerce wp smartpack:order:sync
+* * * * * /path/to/woocommerce wp smartpack:stock:sync
 ```
 
 ## Module Featuers
@@ -25,3 +26,4 @@ You need to be enable to use cronjob to sync data between SmartPack WMS and Wooc
   - CLI: Sync all with shipment status
 - Stock
   - Hook: update product stock on hook signals
+  - CLI: Sync stock to be ajour from WMS
