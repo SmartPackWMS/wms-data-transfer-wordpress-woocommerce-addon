@@ -6,10 +6,8 @@ class Items extends APIService
 {
     function list()
     {
-        $data = $this->client->request('GET', 'item/list/');
-        echo 'getStatusCode: ' . $data->getStatusCode();
-
-        return $data->getBody();
+        $data = $this->client->request('GET', 'item/list', []);
+        return json_decode($data->getBody()->getContents());
     }
 
     function import(array $attr)
