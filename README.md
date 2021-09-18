@@ -5,7 +5,11 @@ Hooks Smartpack WMS need endpoints to update different data for product, stock a
 
 **Stock changed webhook**
 
-/wp-json/smartpack-wms/v1/stock-changed
+{domain-path}/wp-json/smartpack-wms/v1/stock-changed
+
+**Order changed webhook**
+
+{domain-path}/wp-json/smartpack-wms/v1/order-changed
 
 
 ## Crontab

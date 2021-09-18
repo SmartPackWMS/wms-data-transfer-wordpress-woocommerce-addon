@@ -2,11 +2,11 @@
 
 namespace SmartPack\WMS\Controllers;
 
+use Exception;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
-use GuzzleHttp\Exception\RequestException;
 
 class RestRoutes_Controller extends WP_REST_Controller
 {
@@ -16,6 +16,7 @@ class RestRoutes_Controller extends WP_REST_Controller
 
     const ROUTES = [
         'stockChanged'      => '/stock-changed',
+        'orderChanged'      => '/order-changed',
     ];
 
     public static function get_route_namespace(): string
@@ -33,6 +34,15 @@ class RestRoutes_Controller extends WP_REST_Controller
                 'callback'            => [$this, 'stockChanged']
             ]
         );
+
+        register_rest_route(
+            self::get_route_namespace(),
+            self::ROUTES['orderChanged'],
+            [
+                'methods'             => WP_REST_Server::CREATABLE,
+                'callback'            => [$this, 'orderChanged']
+            ]
+        );
     }
 
     public function stockChanged(WP_REST_Request $request)
@@ -48,6 +58,7 @@ class RestRoutes_Controller extends WP_REST_Controller
         } else {
             $setting = get_option(self::OPTION_NAME);
             $beartoken = str_replace('Bearer ', '', $beartoken);
+
             if ($setting['webhook_key'] !== $beartoken) {
                 return new WP_REST_Response([
                     'msg' => 'Beartoken access key is not valid'
@@ -74,6 +85,83 @@ class RestRoutes_Controller extends WP_REST_Controller
 
         return new WP_REST_Response([
             'content' => $product_stock_updated
+        ]);
+    }
+
+    public function orderChanged(WP_REST_Request $request)
+    {
+        $data = json_decode($request->get_body());
+        $beartoken = $request->get_header('Authorization');
+
+        # Token access check
+        if (!$beartoken) {
+            return new WP_REST_Response([
+                'msg' => 'Beartoken access key is not valid'
+            ], 403);
+        } else {
+            $setting = get_option(self::OPTION_NAME);
+            $beartoken = str_replace('Bearer ', '', $beartoken);
+
+            if ($setting['webhook_key'] !== $beartoken) {
+                return new WP_REST_Response([
+                    'msg' => 'Beartoken access key is not valid'
+                ], 403);
+            }
+        }
+
+        $order_updated = [];
+        foreach ($data as $key => $val) {
+            try {
+                $order = new \WC_Order($val->id);
+
+                switch ($val->state) {
+                    case 0:
+                        // None
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'none');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                    case 1:
+                        // Ready For Packing
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'ready-for-packing');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                    case 2:
+                        // Items Missing
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'items-missing');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                    case 3:
+                        // Error
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'error');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                    case 4:
+                        // Packing
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'packing');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                    case 5:
+                        // Packed
+                        $order->update_status('wc-completed');
+                        update_post_meta($val->id, 'smartpack_wc_order_state', 'completed');
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'packed');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                    case 6:
+                        // Canceled
+                        update_post_meta($val->id, 'smartpack_wms_order_state', 'canceled');
+                        update_post_meta($val->id, 'smartpack_wms_changed', new \DateTime());
+                        break;
+                }
+
+                $order_updated[$val->id] = $val->state;
+            } catch (Exception $e) {
+                $order_updated[$val->id] = null;
+            }
+        }
+
+        return new WP_REST_Response([
+            'content' => $order_updated
         ]);
     }
 
