@@ -12,7 +12,7 @@ class Items extends APIService
 
     function import(array $attr)
     {
-        $data = $this->client->request('POST', 'item/import', [
+        $data = $this->client->request('POST', '/wordpress/webhook', [
             'body' => json_encode([
                 $attr
             ])

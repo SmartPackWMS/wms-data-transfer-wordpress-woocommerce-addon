@@ -28,19 +28,21 @@ class CLI_Products
 
             if ($product_sku) {
                 $item = [
-                    'sku' => $product_sku,
-                    'description' => $product->post_title
+                    'method' => 'product',
+                    'data' => [
+                        'sku' => $product_sku,
+                        'description' => $product->post_title
+                    ]
                 ];
 
                 try {
                     $items->import($item);
-                    update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
-                    update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
+                    //             update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
+                    //             update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
 
                     \WP_CLI::success('[' . $product->ID . '] [' . $product_sku . '] Product synced to Smartpack WMS');
                 } catch (Exception $error) {
                     \WP_CLI::warning('Missing connection to SmartPack API - Look trace error below');
-                    print_r($error);
                 }
             } else {
                 \WP_CLI::error('Product missing SKU number');

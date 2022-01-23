@@ -15,15 +15,12 @@ abstract class APIService
         $setting = get_option(self::OPTION_NAME);
 
         $this->client = new Client([
-            'base_uri' => $setting['endpoint'] ?? 'https://smartpack.dk/api/v1/',
+            'base_uri' => $setting['endpoint'],
             'timeout'  => 2.0,
             'headers' => [
                 'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'auth' => [
-                $setting['username'],
-                $setting['password']
+                'Accept' => 'application/json',
+                'X-Hmac-Signature' => hash_hmac('sha256', 'host=' . $_SERVER['HTTP_HOST'] . '&nonce=' . $setting['nonce'], $setting['access_key'])
             ]
         ]);
     }
