@@ -19,10 +19,6 @@ class AdminSettingsPage_Controller
                 settings_fields('pluginPage');
                 do_settings_sections('pluginPage');
                 submit_button();
-
-                echo '
-                </form>
-                ';
             });
         });
 
@@ -54,41 +50,27 @@ class AdminSettingsPage_Controller
             );
 
             add_settings_field(
-                'username',
-                __('Username', 'smartpack_wms'),
-                function () use ($options) {
-                    echo '<input 
-                        type="text" 
-                        name="' . $this->_prefix . 'settings[username]" 
-                        value="' . ($options['username'] ?? '') . '">
-                    ';
-                },
-                'pluginPage',
-                $this->_prefix . 'pluginPage_section'
-            );
-
-            add_settings_field(
-                'password',
-                __('Password', 'smartpack_wms'),
-                function () use ($options) {
-                    echo '<input 
-                        type="text" 
-                        name="' . $this->_prefix . 'settings[password]" 
-                        value="' . ($options['password'] ??  '') . '">
-                    ';
-                },
-                'pluginPage',
-                $this->_prefix . 'pluginPage_section'
-            );
-
-            add_settings_field(
                 'webhook_key',
-                __('Webhook Beartoken Access Key', 'smartpack_wms'),
+                __('Access token', 'smartpack_wms'),
                 function () use ($options) {
                     echo '<input 
                         type="text" 
                         name="' . $this->_prefix . 'settings[webhook_key]" 
                         value="' . ($options['webhook_key'] ??  '') . '">
+                    ';
+                },
+                'pluginPage',
+                $this->_prefix . 'pluginPage_section'
+            );
+
+            add_settings_field(
+                'nonce_key',
+                __('Nonce Key', 'smartpack_wms'),
+                function () use ($options) {
+                    echo '<input 
+                        type="text" 
+                        name="' . $this->_prefix . 'settings[nonce_key]" 
+                        value="' . ($options['nonce_key'] ??  '') . '">
                     ';
                 },
                 'pluginPage',
