@@ -8,7 +8,7 @@ class Webhook extends APIService
 {
     function push($attr)
     {
-        $$data = $this->client->request('POST', '/wordpress/webhook', [
+        $data = $this->client->request('POST', '/wordpress/webhook', [
             'body' => json_encode($attr)
         ]);
 
