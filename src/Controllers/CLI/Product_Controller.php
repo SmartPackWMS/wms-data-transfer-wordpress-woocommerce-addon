@@ -3,7 +3,7 @@
 namespace SmartPack\WMS\Controllers\CLI;
 
 use Exception;
-use SmartPack\WMS\WMSApi\Items;
+use SmartPack\WMS\WMSApi\Webhook;
 
 class CLI_Products
 {
@@ -11,7 +11,7 @@ class CLI_Products
     {
         \WP_CLI::line('Start product sync');
 
-        $items = new Items();
+        $webhook = new Webhook();
 
         $all_ids = get_posts([
             'post_type' => 'product',
@@ -27,7 +27,7 @@ class CLI_Products
             $product_sku = \get_post_meta($product->ID, '_sku', true);
 
             if ($product_sku) {
-                $item = [
+                $product = [
                     'method' => 'product',
                     'data' => [
                         'sku' => $product_sku,
@@ -36,7 +36,7 @@ class CLI_Products
                 ];
 
                 try {
-                    $response = $items->import($item);
+                    $response = $webhook->push($product);
                     if ($response['statusCode'] === 200) {
                         update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
                         update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
