@@ -14,7 +14,7 @@ define('SMARTPACK_WMS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 // adding src folder files
 require_once 'src/helpers/helpers.php';
 require_once 'src/WMSApi/APIService.php';
-require_once 'src/WMSApi/Items.php';
+require_once 'src/WMSApi/Webhook.php';
 require_once 'src/Controllers/WPInit_Controller.php';
 require_once 'src/Controllers/AdminSettingsPage_Controller.php';
 require_once 'src/Controllers/CLI_Controller.php';
