@@ -16,7 +16,10 @@ class Items extends APIService
             'body' => json_encode($attr)
         ]);
 
-        return $data->getBody();
+        return [
+            'statusCode' => $data->getStatusCode(),
+            'body' => $data->getBody()
+        ];
     }
 
     function get(string $sku)

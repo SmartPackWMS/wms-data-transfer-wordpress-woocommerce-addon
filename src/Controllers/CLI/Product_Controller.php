@@ -36,11 +36,15 @@ class CLI_Products
                 ];
 
                 try {
-                    $items->import($item);
-                    //             update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
-                    //             update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
+                    $response = $items->import($item);
+                    if ($response['statusCode'] === 200) {
+                        update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
+                        update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
 
-                    \WP_CLI::success('[' . $product->ID . '] [' . $product_sku . '] Product synced to Smartpack WMS');
+                        \WP_CLI::success('[' . $product->ID . '] [' . $product_sku . '] Product synced to Smartpack WMS');
+                    } else {
+                        \WP_CLI::error('[' . $product->ID . '] [' . $product_sku . '] Product not synced to Smartpack WMS, status code: ' . $response['statusCode']);
+                    }
                 } catch (Exception $error) {
                     \WP_CLI::warning('Missing connection to SmartPack API - Look trace error below');
                 }
