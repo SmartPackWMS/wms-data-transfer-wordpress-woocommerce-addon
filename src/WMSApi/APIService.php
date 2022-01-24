@@ -20,7 +20,8 @@ abstract class APIService
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'X-Hmac-Signature' => hash_hmac('sha256', 'host=' . $_SERVER['HTTP_HOST'] . '&nonce=' . $setting['nonce'], $setting['access_key'])
+                'X-WordPress-Domain' => $_SERVER['HTTP_HOST'],
+                'X-WordPress-Sha256' => hash_hmac('sha256', 'host=' . $_SERVER['HTTP_HOST'] . '&nonce=' . $setting['nonce'], $setting['access_key'])
             ]
         ]);
     }
