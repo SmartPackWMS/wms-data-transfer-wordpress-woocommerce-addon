@@ -1,4 +1,4 @@
-# wordpress-woocommerce-plugin
+# wms-data-transfer-wordpress-plugin-woocommerce
 
 ## Webhook rules
 Hooks Smartpack WMS need endpoints to update different data for product, stock and order there will be some REST API endpoints for that. remeber to add a webhook key in the settings area else its have disabled security and all can sending webhook to your store. 
@@ -19,6 +19,12 @@ You need to be enable to use cronjob to sync data between SmartPack WMS and Wooc
 * * * * * /path/to/woocommerce wp smartpack:product:sync
 * * * * * /path/to/woocommerce wp smartpack:order:sync
 ```
+
+```
+wp cron event run --due-now --allow-root
+wp cron event delete wms_cron_product_hook --allow-root
+```
+
 
 ## Module Featuers
 **WMS**

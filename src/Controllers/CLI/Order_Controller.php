@@ -2,7 +2,7 @@
 
 namespace SmartPack\WMS\Controllers\CLI;
 
-use SmartPack\WMS\WMSApi\Shipments;
+use SmartPack\WMS\WMSApi\Webhook;
 use SmartPack\WMS\Helpers;
 
 class CLI_Orders
@@ -11,7 +11,7 @@ class CLI_Orders
     {
         \WP_CLI::line('Start order sync');
 
-        $shipments = new Shipments();
+        $webhook = new Webhook();
 
         $all_ids = get_posts([
             'post_type' => 'shop_order',
@@ -92,14 +92,19 @@ class CLI_Orders
                 "droppointId" => '5743321',
                 "items" => $order_lines
             ];
-            $response = $shipments->create($shipment_data);
-            if ($response->getStatusCode() === 200) {
+
+            $response = $webhook->push([
+                'method' => 'order',
+                'data' => $shipment_data
+            ]);
+
+            if ($response['statusCode'] === 200) {
                 update_post_meta($order->ID, 'smartpack_wms_state', 'synced');
                 update_post_meta($order->ID, 'smartpack_wms_changed', new \DateTime());
 
                 \WP_CLI::success('[' . $order->ID . '] Order synced to SmartPack WMS');
             } else {
-                \WP_CLI::warning('[' . $order->ID . '] Order error in sync to SmartPack WMS');
+                \WP_CLI::warning('[' . $order->ID . '] Order error in sync to SmartPack WMS, return status code ' . $response['statusCode']);
             }
         }
     }

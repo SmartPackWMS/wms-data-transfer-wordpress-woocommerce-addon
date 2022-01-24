@@ -1,9 +1,9 @@
 {
-    "name": "smartpack/wordpress-woocommerce-plugin",
+    "name": "smartpack/wms-data-transfer-wordpress-plugin-woocommerce",
     "description": "WordPress SmartPack plugin to WooCommerce with full integration to smartpack.dk system.",
     "type": "wordpress-plugin",
     "keywords": ["wordpress", "plugin"],
-    "homepage": "https://github.com/SmartPackWMS/wordpress-woocommerce-plugin",
+    "homepage": "https://github.com/SmartPackWMS/wms-data-transfer-wordpress-plugin-woocommerce",
     "authors": [
         {
             "name": "Paris Nakita Kejser",
