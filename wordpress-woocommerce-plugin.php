@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: SmartPack - WooCommerce WMS Plugin
+ * Plugin Name: SmartPack WMS - WooCommerce Addon
  * Description: Full integration with SmartPack WMS API when using WooCommerce as shopping platform.
- * Version: 0.4
+ * Version: 0.6
  * Author: SmartPack
  * Author URI: https://smartpack.dk
  */
