@@ -1,6 +1,6 @@
 {
-    "name": "smartpack/wms-data-transfer-wordpress-plugin-woocommerce",
-    "description": "WordPress SmartPack plugin to WooCommerce with full integration to smartpack.dk system.",
+    "name": "smartpack/wms-data-transfer-wordpress-woocommerce-addon",
+    "description": "WordPress SmartPack addon to WooCommerce with full integration to smartpack.dk system.",
     "type": "wordpress-plugin",
     "keywords": ["wordpress", "plugin", "woocommerce"],
     "homepage": "https://github.com/SmartPackWMS/wms-data-transfer-wordpress-plugin-woocommerce",
