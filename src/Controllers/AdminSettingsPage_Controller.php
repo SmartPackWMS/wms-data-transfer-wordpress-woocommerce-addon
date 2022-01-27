@@ -42,7 +42,7 @@ class AdminSettingsPage_Controller
                     echo '<input 
                         type="text" 
                         name="' . $this->_prefix . 'settings[endpoint]" 
-                        value="' . ($options['endpoint'] ?? '') . '">
+                        value="' . esc_attr(($options['endpoint'] ?? '')) . '">
                     ';
                 },
                 'pluginPage',
@@ -56,7 +56,7 @@ class AdminSettingsPage_Controller
                     echo '<input 
                         type="text" 
                         name="' . $this->_prefix . 'settings[webhook_key]" 
-                        value="' . ($options['webhook_key'] ??  '') . '">
+                        value="' . esc_attr(($options['webhook_key'] ??  '')) . '">
                     ';
                 },
                 'pluginPage',
@@ -70,7 +70,7 @@ class AdminSettingsPage_Controller
                     echo '<input 
                         type="text" 
                         name="' . $this->_prefix . 'settings[nonce_key]" 
-                        value="' . ($options['nonce_key'] ??  '') . '">
+                        value="' . esc_attr(($options['nonce_key'] ??  '')) . '">
                     ';
                 },
                 'pluginPage',

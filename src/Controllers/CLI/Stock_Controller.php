@@ -16,7 +16,6 @@ class CLI_Stock
 
         if ($products->status === 200) {
             foreach ($products->data as $val) {
-                echo 'SKU: ' . $val->sku . "\n";
                 // Product lookup, if exists, update stock, if not skip product!
                 $product_data = get_posts([
                     'post_type' => 'product',
@@ -27,22 +26,17 @@ class CLI_Stock
                 ]);
 
                 if (!empty($product_data)) {
-                    echo 'ProductID: ' . $product_data[0]->ID . "\n";
-                    echo 'Stock: ' . $val->totalCombined . "\n";
-
                     $product = new \WC_Product($product_data[0]->ID);
                     $product->set_manage_stock(true);
                     $product->save();
 
                     wc_update_product_stock($product_data[0]->ID, $val->totalCombined);
                 } else {
-                    echo "not found!\n";
+                    // Not found
                 }
-
-                echo "\n";
             }
         } else {
-            echo 'error';
+            // Error
         }
     }
 }
