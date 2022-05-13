@@ -5,7 +5,7 @@
  * Description: Full integration with SmartPack WMS API when using WooCommerce as shopping platform.
  * Author: SmartPack
  * Author URI: https://smartpack.dk
- * Version: 0.0.1
+ * Version: 0.0.2
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */

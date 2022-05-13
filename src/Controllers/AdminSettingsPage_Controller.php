@@ -64,13 +64,13 @@ class AdminSettingsPage_Controller
             );
 
             add_settings_field(
-                'nonce_key',
-                __('Nonce Key', 'smartpack_wms'),
+                'wordpress_access_key',
+                __('WordPress Access Key', 'smartpack_wms'),
                 function () use ($options) {
                     echo '<input 
                         type="text" 
-                        name="' . $this->_prefix . 'settings[nonce_key]" 
-                        value="' . esc_attr(($options['nonce_key'] ??  '')) . '">
+                        name="' . $this->_prefix . 'settings[wordpress_access_key]" 
+                        value="' . esc_attr(($options['wordpress_access_key'] ??  '')) . '">
                     ';
                 },
                 'pluginPage',
