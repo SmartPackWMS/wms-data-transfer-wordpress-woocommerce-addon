@@ -1,5 +1,4 @@
 <?php
-
 namespace SmartPack\WMS\Controllers;
 
 use SmartPack\WMS\Controllers\CLI\CLI_Products;
@@ -8,12 +7,19 @@ use DateTime;
 
 class WPInit_Controller
 {
+    function wmsCronProductHook() {
+        $product_cli = new CLI_Products();
+        $product_cli->execute();
+    }
+    
+    function wmsCronOrderHook() {
+        $order_cli = new CLI_Orders();
+        $order_cli->execute();
+    }
+
     private function __crontabEventsProductHook()
     {
-        add_action('wms_cron_product_hook', function () {
-            $product_cli = new CLI_Products();
-            $product_cli->execute();
-        });
+        add_action('wms_cron_product_hook', [ $this, 'wmsCronProductHook' ]);
 
         register_deactivation_hook(__FILE__, function () {
             $timestamp = wp_next_scheduled('wms_cron_product_hook');
@@ -29,10 +35,7 @@ class WPInit_Controller
 
     private function __crontabEventsOrderHook()
     {
-        add_action('wms_cron_order_hook', function () {
-            $order_cli = new CLI_Orders();
-            $order_cli->execute();
-        });
+        add_action('wms_cron_order_hook',  [ $this, 'wmsCronOrderHook' ]);
 
         register_deactivation_hook(__FILE__, function () {
             $timestamp = wp_next_scheduled('wms_cron_order_hook');

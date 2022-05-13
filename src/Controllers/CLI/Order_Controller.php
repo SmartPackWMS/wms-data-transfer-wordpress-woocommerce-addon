@@ -9,7 +9,7 @@ class CLI_Orders
 {
     function execute()
     {
-        \WP_CLI::line('Start order sync');
+        echo 'Start order sync';
 
         $webhook = new Webhook();
 
@@ -102,9 +102,9 @@ class CLI_Orders
                 update_post_meta($order->ID, 'smartpack_wms_state', 'synced');
                 update_post_meta($order->ID, 'smartpack_wms_changed', new \DateTime());
 
-                \WP_CLI::success('[' . $order->ID . '] Order synced to SmartPack WMS');
+                echo '[' . $order->ID . '] Order synced to SmartPack WMS';
             } else {
-                \WP_CLI::warning('[' . $order->ID . '] Order error in sync to SmartPack WMS, return status code ' . $response['statusCode']);
+                echo '[' . $order->ID . '] Order error in sync to SmartPack WMS, return status code ' . $response['statusCode'];
             }
         }
     }

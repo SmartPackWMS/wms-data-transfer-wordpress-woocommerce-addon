@@ -9,7 +9,7 @@ class CLI_Products
 {
     function execute()
     {
-        \WP_CLI::line('Start product sync');
+        echo 'Start product sync';
 
         $webhook = new Webhook();
 
@@ -27,7 +27,7 @@ class CLI_Products
             $product_sku = \get_post_meta($product->ID, '_sku', true);
 
             if ($product_sku) {
-                $product = [
+                $product_data = [
                     'method' => 'product',
                     'data' => [
                         'sku' => $product_sku,
@@ -36,20 +36,21 @@ class CLI_Products
                 ];
 
                 try {
-                    $response = $webhook->push($product);
-                    if ($response['statusCode'] === 200) {
+                    $response = $webhook->push($product_data);
+
+                    if ($response['statusCode'] === 201) {
                         update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
                         update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
 
-                        \WP_CLI::success('[' . $product->ID . '] [' . $product_sku . '] Product synced to Smartpack WMS');
+                        echo '[' . $product->ID . '] [' . $product_sku . '] Product synced to Smartpack WMS';
                     } else {
-                        \WP_CLI::error('[' . $product->ID . '] [' . $product_sku . '] Product not synced to Smartpack WMS, status code: ' . $response['statusCode']);
+                        echo '[' . $product->ID . '] [' . $product_sku . '] Product not synced to Smartpack WMS, status code: ' . $response['statusCode'];
                     }
                 } catch (Exception $error) {
-                    \WP_CLI::warning('Missing connection to SmartPack API - Look trace error below');
+                    echo 'Missing connection to SmartPack API - Look trace error below';
                 }
             } else {
-                \WP_CLI::error('Product missing SKU number');
+                echo 'Product missing SKU number';
             }
         }
     }

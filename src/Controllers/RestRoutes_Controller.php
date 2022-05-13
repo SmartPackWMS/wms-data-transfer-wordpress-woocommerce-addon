@@ -26,23 +26,23 @@ class RestRoutes_Controller extends WP_REST_Controller
 
     public function register_routes()
     {
-        register_rest_route(
-            self::get_route_namespace(),
-            self::ROUTES['stockChanged'],
-            [
-                'methods'             => WP_REST_Server::CREATABLE,
-                'callback'            => [$this, 'stockChanged']
-            ]
-        );
+        // register_rest_route(
+        //     self::get_route_namespace(),
+        //     self::ROUTES['stockChanged'],
+        //     [
+        //         'methods'             => WP_REST_Server::CREATABLE,
+        //         'callback'            => [$this, 'stockChanged']
+        //     ]
+        // );
 
-        register_rest_route(
-            self::get_route_namespace(),
-            self::ROUTES['orderChanged'],
-            [
-                'methods'             => WP_REST_Server::CREATABLE,
-                'callback'            => [$this, 'orderChanged']
-            ]
-        );
+        // register_rest_route(
+        //     self::get_route_namespace(),
+        //     self::ROUTES['orderChanged'],
+        //     [
+        //         'methods'             => WP_REST_Server::CREATABLE,
+        //         'callback'            => [$this, 'orderChanged']
+        //     ]
+        // );
     }
 
     public function stockChanged(WP_REST_Request $request)
