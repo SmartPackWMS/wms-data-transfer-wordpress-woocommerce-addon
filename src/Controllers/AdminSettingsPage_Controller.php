@@ -37,26 +37,13 @@ class AdminSettingsPage_Controller
 
             add_settings_field(
                 'endpoint',
-                __('API Endpoint', 'smartpack_wms'),
+                __('Webhook Endpoint', 'smartpack_wms'),
                 function () use ($options) {
                     echo '<input 
                         type="text" 
+                        style="width: 100%;"
                         name="' . $this->_prefix . 'settings[endpoint]" 
                         value="' . esc_attr(($options['endpoint'] ?? '')) . '">
-                    ';
-                },
-                'pluginPage',
-                $this->_prefix . 'pluginPage_section'
-            );
-
-            add_settings_field(
-                'webhook_key',
-                __('Access token', 'smartpack_wms'),
-                function () use ($options) {
-                    echo '<input 
-                        type="text" 
-                        name="' . $this->_prefix . 'settings[webhook_key]" 
-                        value="' . esc_attr(($options['webhook_key'] ??  '')) . '">
                     ';
                 },
                 'pluginPage',
