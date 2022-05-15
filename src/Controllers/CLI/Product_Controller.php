@@ -7,6 +7,12 @@ use SmartPack\WMS\WMSApi\Webhook;
 
 class CLI_Products
 {
+    function getProtectedValue($obj, $name) {
+        $array = (array)$obj;
+        $prefix = chr(0).'*'.chr(0);
+        return $array[$prefix.$name];
+    }
+
     function execute()
     {
         echo 'Start product sync';
@@ -27,11 +33,24 @@ class CLI_Products
             $product_sku = \get_post_meta($product->ID, '_sku', true);
 
             if ($product_sku) {
+                $wc_product_data = \wc_get_product( $product->ID );
+                $image_id  = $wc_product_data->get_image_id();
+                $image_url = \wp_get_attachment_image_url( $image_id, 'full' );
+                
+                $obj_product = $this->getProtectedValue($wc_product_data, 'data');
+                
                 $product_data = [
                     'method' => 'product',
                     'data' => [
-                        'sku' => $product_sku,
-                        'description' => $product->post_title
+                        'id' => (string) $product->ID,
+                        'sku' => $obj_product['sku'],
+                        'title' => $obj_product['name'],
+                        'description' => $obj_product['description'],
+                        'cost' => $obj_product['price'],
+                        'vendor' => '',
+                        'manufacturer' => '',
+                        'weight' => $obj_product['weight'],
+                        'imageUrl' => $image_url
                     ]
                 ];
 

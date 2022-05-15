@@ -93,12 +93,9 @@ class CLI_Orders
                 "items" => $order_lines
             ];
 
-            $response = $webhook->push([
-                'method' => 'order',
-                'data' => $shipment_data
-            ]);
+            $response = $webhook->push($shipment_data);
 
-            if ($response['statusCode'] === 200) {
+            if ($response['statusCode'] === 201) {
                 update_post_meta($order->ID, 'smartpack_wms_state', 'synced');
                 update_post_meta($order->ID, 'smartpack_wms_changed', new \DateTime());
 

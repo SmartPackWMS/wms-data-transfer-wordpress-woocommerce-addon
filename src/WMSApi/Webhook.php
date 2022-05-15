@@ -12,8 +12,10 @@ class Webhook
 
         $data = wp_remote_post($setting['endpoint'], [
             'timeout' => 2,
-            'data' => json_encode($attr),
-        ] );
+            'body' => json_encode($attr),
+            'method'      => 'POST',
+            'data_format' => 'body',
+        ]);
         $data = json_decode(json_encode($data));
 
         return [
