@@ -68,9 +68,9 @@ class CLI_Orders
                 'referenceNo' => (string) $order->ID,
                 'uniqueReferenceNo' => (string) $order->ID,
                 'description' => '',
-                'printDeliveryNote' => true,
+                'printDeliveryNote' => false,
                 'sender' => [
-                    'name' => get_option('woocommerce_store_address'),
+                    'name' => get_bloginfo('name'),
                     'street1' => get_option('woocommerce_store_address'),
                     'zipcode' => get_option('woocommerce_store_postcode'),
                     'city' => get_option('woocommerce_store_city'),
