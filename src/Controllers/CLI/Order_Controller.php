@@ -88,8 +88,8 @@ class CLI_Orders
                     'phone' => $billing_phone,
                     'email' => $billing_email,
                 ],
-                "deliveryMethod" => 'custom_pickup',
-                "droppointId" => '5743321',
+                "deliveryMethod" => 'none',
+                "droppointId" => '',
                 "items" => $order_lines
             ];
 
