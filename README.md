@@ -36,3 +36,8 @@ wp cron event delete wms_cron_product_hook --allow-root
 - Stock
   - Hook: update product stock on hook signals
   - CLI: Full stock sync to be ajour from WMS into Woo
+
+## Woocommerce order process
+Custom orders will not be automatically transfered to the WMS integration.
+
+![](/assets/images/woocommerce-order-process-diagram.webp)
