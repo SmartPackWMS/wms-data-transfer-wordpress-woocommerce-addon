@@ -16,7 +16,10 @@ class CLI_Orders
         $all_ids = get_posts([
             'post_type' => 'shop_order',
             'numberposts' => -1,
-            'post_status' => 'wc-processing',
+            'post_status' => [
+                'wc-processing', 'wc-on-hold', 'wc-pending', 'wc-completed', 
+                'wc-cancelled', 'wc-refunded', 'wc-failed'
+            ],
             'meta_query' => [[
                 'key' => 'smartpack_wms_state',
                 'value' => 'pending'
@@ -45,10 +48,14 @@ class CLI_Orders
             foreach ($lines as $line) {
                 $qty = Helpers::wcGetOrderLineMeta($line->order_item_id, '_qty');
                 $product_id = Helpers::wcGetOrderLineMeta($line->order_item_id, '_product_id');
+                $line_total = Helpers::wcGetOrderLineMeta($line->order_item_id, '_line_total');
                 $product_sku = \get_post_meta($product_id->meta_value, '_sku', true);
+                # _variation_id
 
                 $order_lines[] = [
                     'product_id' => (string) $product_id->meta_value,
+                    'price_total' => (float) ((int) $line_total->meta_value),
+                    'price' => (float) ((int) $line_total->meta_value/(int) $qty->meta_value),
                     'sku' => $product_sku,
                     'qty' => (int) $qty->meta_value,
                 ];
@@ -64,6 +71,13 @@ class CLI_Orders
             $billing_email = \get_post_meta($order->ID, '_billing_email', true);
             $billing_phone = \get_post_meta($order->ID, '_billing_phone', true);
 
+            $customer_ip_address = \get_post_meta($order->ID, '_customer_ip_address', true);
+            $customer_user_agent = \get_post_meta($order->ID, '_customer_user_agent', true);
+            $payment_method = \get_post_meta($order->ID, '_payment_method_title', true);
+
+            # _order_total
+            # _order_key: wc_order_en5sptKclNffY
+
             $shipment_data = [
                 'method' => 'order',
                 'data' => [
@@ -72,6 +86,14 @@ class CLI_Orders
                     'uniqueReferenceNo' => (string) $order->ID,
                     'description' => '',
                     'printDeliveryNote' => false,
+                    'payment' => [
+                        'method' => $payment_method,
+                        'paid' => 1,
+                    ],
+                    'client_details' => [
+                        'browser_ip' => $customer_ip_address,
+                        'user_agent' => $customer_user_agent,
+                    ],
                     'sender' => [
                         'name' => get_bloginfo('name'),
                         'street1' => get_option('woocommerce_store_address'),
