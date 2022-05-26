@@ -13,14 +13,16 @@ Hooks Smartpack WMS need endpoints to update different data for product, stock a
 
 
 ## Crontab
-You need to be enable to use cronjob to sync data between SmartPack WMS and Woocommerce. We are using CLI tools inside the cron so we are sure its react in the same way when you execute your code.
+All data between SmartPack WMS and Woocommerce will be synced. We are using WordPress built-in cron-scheduler for processing order and product data, if you disabled the built-in cron-scheduler in WordPress, you need to run add custom-cronjob inside your crontab file and be sure to install the WP CLI on your system.
 
 ``` bash
-* * * * * /path/to/woocommerce wp smartpack:product:sync
-* * * * * /path/to/woocommerce wp smartpack:order:sync
+* * * * * wp cron event run wms_cron_product_hook
+* * * * * wp cron event run wms_cron_order_hook
 ```
 
-```
+You can also use WP CLI to trigger cron events manually or delete existing cron events if something goes wrong.
+
+``` bash
 wp cron event run --due-now --allow-root
 wp cron event delete wms_cron_product_hook --allow-root
 ```
