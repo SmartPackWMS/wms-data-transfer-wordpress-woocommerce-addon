@@ -84,7 +84,8 @@ class CLI_Orders
                     'orderNo' => (string) $order->ID,
                     'referenceNo' => (string) $order->ID,
                     'uniqueReferenceNo' => (string) $order->ID,
-                    'description' => '',
+                    'status' => $order->post_status,
+                    'description' => $order->post_excerpt,
                     'printDeliveryNote' => false,
                     'payment' => [
                         'method' => $payment_method,
