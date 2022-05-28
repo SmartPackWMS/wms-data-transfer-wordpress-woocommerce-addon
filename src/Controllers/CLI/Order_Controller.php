@@ -78,7 +78,7 @@ class CLI_Orders
             # _order_total
             # _order_key: wc_order_en5sptKclNffY
 
-            $shipment_data = [
+            $shipment_data = [[
                 'method' => 'order',
                 'data' => [
                     'orderNo' => (string) $order->ID,
@@ -101,8 +101,10 @@ class CLI_Orders
                         'zipcode' => get_option('woocommerce_store_postcode'),
                         'city' => get_option('woocommerce_store_city'),
                         'country' => get_option('woocommerce_default_country'),
-                        'phone' => '',
-                        'email' => '',
+                        'phone' => '98765432',
+                        'email' => 'asdfgh@dfghj.dk',
+                        'country' => 'Denmark',
+                        "country_code" => 'DK'
                     ],
                     'recipient' => [
                         'name' => $shipment_firstname . ' ' . $shipment_lastname,
@@ -113,12 +115,14 @@ class CLI_Orders
                         'country' =>  $shipment_country,
                         'phone' => $billing_phone,
                         'email' => $billing_email,
+                        'country' => 'Denmark',
+                        "country_code" => 'DK'
                     ],
                     "deliveryMethod" => 'none',
                     "droppointId" => '',
                     "items" => $order_lines
                 ]
-            ];
+            ]];
 
             $response = $webhook->push($shipment_data);
             print_r($response);
