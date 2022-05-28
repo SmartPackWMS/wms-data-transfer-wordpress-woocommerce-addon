@@ -26,7 +26,9 @@ You can also use WP CLI to trigger cron events manually or delete existing cron 
 wp cron event run --due-now --allow-root
 wp cron event delete wms_cron_product_hook --allow-root
 ```
-
+# Product hint:
+- Simple product use its own SKU
+- Product variations need there own SKU else its used parent SKU.
 
 ## Module Featuers
 **WMS**

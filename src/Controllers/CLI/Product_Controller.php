@@ -13,6 +13,31 @@ class CLI_Products
         return $array[$prefix.$name];
     }
 
+    function __get_product_data_simple($product_id) {
+        $wc_product_data = \wc_get_product( $product_id );
+        $image_id  = $wc_product_data->get_image_id();
+        $image_url = \wp_get_attachment_image_url( $image_id, 'full' );
+        
+        $obj_product = $this->getProtectedValue($wc_product_data, 'data');
+        
+        $product_data = [
+            'method' => 'product',
+            'data' => [
+                'id' => (string) $product_id,
+                'sku' => $obj_product['sku'],
+                'title' => $obj_product['name'],
+                'description' => $obj_product['description'],
+                'cost' => $obj_product['price'],
+                'vendor' => '',
+                'manufacturer' => '',
+                'weight' => $obj_product['weight'],
+                'imageUrl' => $image_url
+            ]
+        ];
+
+        return $product_data;
+    }
+
     function execute()
     {
         echo 'Start product sync';
@@ -20,7 +45,7 @@ class CLI_Products
         $webhook = new Webhook();
 
         $all_ids = get_posts([
-            'post_type' => 'product',
+            'post_type' => ['product'],
             'numberposts' => -1,
             'post_status' => 'publish',
             'meta_query' => [[
@@ -31,32 +56,37 @@ class CLI_Products
 
         foreach ($all_ids as $product) {
             $product_sku = \get_post_meta($product->ID, '_sku', true);
+            
+            $product_type = null;
+            $product_data = [];
+            $woo_product = wc_get_product( $product->ID );
 
-            if ($product_sku) {
-                $wc_product_data = \wc_get_product( $product->ID );
-                $image_id  = $wc_product_data->get_image_id();
-                $image_url = \wp_get_attachment_image_url( $image_id, 'full' );
-                
-                $obj_product = $this->getProtectedValue($wc_product_data, 'data');
-                
-                $product_data = [
-                    'method' => 'product',
-                    'data' => [
-                        'id' => (string) $product->ID,
-                        'sku' => $obj_product['sku'],
-                        'title' => $obj_product['name'],
-                        'description' => $obj_product['description'],
-                        'cost' => $obj_product['price'],
-                        'vendor' => '',
-                        'manufacturer' => '',
-                        'weight' => $obj_product['weight'],
-                        'imageUrl' => $image_url
-                    ]
-                ];
+            if ($woo_product->is_type('simple')) {
+                $product_type = 'simple';
+                $product_data[] = $this->__get_product_data_simple($product->ID);
 
+            } elseif ($woo_product->is_type('variable')) {
+                $product_type = 'variable';
+                $product_data[] = $this->__get_product_data_simple($product->ID);
+
+                $product_variation = get_posts([
+                    'post_type' => ['product_variation'],
+                    'numberposts' => -1,
+                    'post_status' => 'publish',
+                    'post_parent' => $product->ID
+                ]);
+
+                foreach ($product_variation as $variation) {
+                    $product_data[] = $this->__get_product_data_simple($variation->ID);
+                }
+               
+            } else {
+                echo 'prodct type missing!';
+            }
+
+            if ($product_sku && $product_type !== null) {
                 try {
-                    $response = $webhook->push($product_data);
-
+                    
                     if ($response['statusCode'] === 201) {
                         update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
                         update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
