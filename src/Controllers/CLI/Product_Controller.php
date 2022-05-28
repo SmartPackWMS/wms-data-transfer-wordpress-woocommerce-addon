@@ -86,7 +86,7 @@ class CLI_Products
 
             if ($product_sku && $product_type !== null) {
                 try {
-                    
+                    $response = $webhook->push($product_data);
                     if ($response['statusCode'] === 201) {
                         update_post_meta($product->ID, 'smartpack_wms_state', 'synced');
                         update_post_meta($product->ID, 'smartpack_wms_changed', new \DateTime());
