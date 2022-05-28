@@ -9,6 +9,12 @@ if (!defined('ABSPATH')) {
 
 class Helpers
 {
+   static  function getProtectedValue($obj, $name) {
+        $array = (array)$obj;
+        $prefix = chr(0).'*'.chr(0);
+        return $array[$prefix.$name];
+    }
+
     static function wcGetOrderLineMeta(int $order_item_id, string $meta_key)
     {
         global $wpdb;
@@ -28,5 +34,37 @@ class Helpers
          ");
 
         return $meta_data;
+    }
+
+    static function getAllproducts() {
+        $products = get_posts([
+            'post_type' => ['product'],
+            'numberposts' => -1,
+            'post_status' => 'publish',
+        ]);
+
+        return $products;
+    }
+
+    static function getProductData($product_id) {
+        $wc_product_data = \wc_get_product( $product_id );
+        $image_id  = $wc_product_data->get_image_id();
+        $image_url = \wp_get_attachment_image_url( $image_id, 'full' );
+        
+        $obj_product = self::getProtectedValue($wc_product_data, 'data');
+        
+        $product_data = [
+            'id' => (string) $product_id,
+            'sku' => $obj_product['sku'],
+            'title' => $obj_product['name'],
+            'description' => $obj_product['description'],
+            'cost' => $obj_product['price'],
+            'vendor' => '',
+            'manufacturer' => '',
+            'weight' => $obj_product['weight'],
+            'imageUrl' => $image_url
+        ];
+
+        return $product_data;
     }
 }

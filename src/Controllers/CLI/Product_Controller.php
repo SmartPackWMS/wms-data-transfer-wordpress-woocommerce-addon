@@ -7,18 +7,12 @@ use SmartPack\WMS\WMSApi\Webhook;
 
 class CLI_Products
 {
-    function getProtectedValue($obj, $name) {
-        $array = (array)$obj;
-        $prefix = chr(0).'*'.chr(0);
-        return $array[$prefix.$name];
-    }
-
     function __get_product_data_simple($product_id) {
         $wc_product_data = \wc_get_product( $product_id );
         $image_id  = $wc_product_data->get_image_id();
         $image_url = \wp_get_attachment_image_url( $image_id, 'full' );
         
-        $obj_product = $this->getProtectedValue($wc_product_data, 'data');
+        $obj_product = Helpers::getProtectedValue($wc_product_data, 'data');
         
         $product_data = [
             'method' => 'product',
@@ -63,11 +57,17 @@ class CLI_Products
 
             if ($woo_product->is_type('simple')) {
                 $product_type = 'simple';
-                $product_data[] = $this->__get_product_data_simple($product->ID);
+                $product_data[] = [
+                    'method' => 'product',
+                    'data' => Helpers::getProductData($product->ID)
+                ];
 
             } elseif ($woo_product->is_type('variable')) {
                 $product_type = 'variable';
-                $product_data[] = $this->__get_product_data_simple($product->ID);
+                $product_data[] = [
+                    'method' => 'product',
+                    'data' => Helpers::getProductData($product->ID)
+                ];
 
                 $product_variation = get_posts([
                     'post_type' => ['product_variation'],
@@ -77,7 +77,10 @@ class CLI_Products
                 ]);
 
                 foreach ($product_variation as $variation) {
-                    $product_data[] = $this->__get_product_data_simple($variation->ID);
+                    $product_data[] = [
+                        'method' => 'product',
+                        'data' => Helpers::getProductData($product->ID)
+                    ];
                 }
                
             } else {

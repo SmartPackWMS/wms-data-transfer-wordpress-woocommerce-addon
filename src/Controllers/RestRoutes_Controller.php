@@ -8,6 +8,8 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
+use SmartPack\WMS\Helpers;
+
 class RestRoutes_Controller extends WP_REST_Controller
 {
     const PLUGIN_PREFIX = 'smartpack-wms';
@@ -17,6 +19,8 @@ class RestRoutes_Controller extends WP_REST_Controller
     const ROUTES = [
         'stockChanged'      => '/stock-changed',
         'orderChanged'      => '/order-changed',
+        'exportProducts'      => '/export/products',
+        'exportOrders'      => '/export/orders',
     ];
 
     public static function get_route_namespace(): string
@@ -41,6 +45,26 @@ class RestRoutes_Controller extends WP_REST_Controller
         //     [
         //         'methods'             => WP_REST_Server::CREATABLE,
         //         'callback'            => [$this, 'orderChanged']
+        //     ]
+        // );
+
+
+        register_rest_route(
+            self::get_route_namespace(),
+            self::ROUTES['exportProducts'],
+            [
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => [$this, 'exportProducts']
+            ]
+        );
+
+
+        // register_rest_route(
+        //     self::get_route_namespace(),
+        //     self::ROUTES['exportOrders'],
+        //     [
+        //         'methods'             => WP_REST_Server::CREATABLE,
+        //         'callback'            => [$this, 'exportOrders']
         //     ]
         // );
     }
@@ -162,6 +186,40 @@ class RestRoutes_Controller extends WP_REST_Controller
 
         return new WP_REST_Response([
             'content' => $order_updated
+        ]);
+    }
+
+    public function exportProducts(WP_REST_Request $request) {
+        $products = Helpers::getAllproducts();
+
+        $product_data = [];
+
+        foreach ($products as $product) {
+            $product_sku = \get_post_meta($product->ID, '_sku', true);
+            $woo_product = wc_get_product( $product->ID );
+
+            if ($woo_product->is_type('simple')) {
+                $product_type = 'simple';
+                $product_data[] = Helpers::getProductData($product->ID);
+            } elseif ($woo_product->is_type('variable')) {
+                $product_type = 'variable';
+                $product_data[] = Helpers::getProductData($product->ID);
+
+                $product_variation = get_posts([
+                    'post_type' => ['product_variation'],
+                    'numberposts' => -1,
+                    'post_status' => 'publish',
+                    'post_parent' => $product->ID
+                ]);
+
+                foreach ($product_variation as $variation) {
+                    $product_data[] = Helpers::getProductData($variation->ID);
+                }
+            }
+        }
+
+        return new WP_REST_Response([
+            'content' => $product_data,
         ]);
     }
 
