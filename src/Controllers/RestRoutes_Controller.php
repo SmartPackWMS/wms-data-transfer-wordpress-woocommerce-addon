@@ -58,15 +58,14 @@ class RestRoutes_Controller extends WP_REST_Controller
             ]
         );
 
-
-        // register_rest_route(
-        //     self::get_route_namespace(),
-        //     self::ROUTES['exportOrders'],
-        //     [
-        //         'methods'             => WP_REST_Server::CREATABLE,
-        //         'callback'            => [$this, 'exportOrders']
-        //     ]
-        // );
+        register_rest_route(
+            self::get_route_namespace(),
+            self::ROUTES['exportOrders'],
+            [
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => [$this, 'exportOrders']
+            ]
+        );
     }
 
     public function stockChanged(WP_REST_Request $request)
@@ -212,6 +211,18 @@ class RestRoutes_Controller extends WP_REST_Controller
                 'found' => count($product_data)
             ]
         ]);
+    }
+
+    public function exportOrders() {
+        $limit = (isset($_GET['limit']) ? (int) $_GET['limit'] : 100);
+        $offset = (isset($_GET['offset']) ? (int) $_GET['offset'] : 0);
+
+        $order_data = [];
+        foreach (Helpers::getAllOrders($limit, $offset) as $order) {
+            $order_data[] = Helpers::getOrderData($order->ID, $order);
+        }
+
+        return $order_data;
     }
 
     public function init()
