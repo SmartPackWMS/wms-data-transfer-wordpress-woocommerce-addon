@@ -36,13 +36,14 @@ class Helpers
         return $meta_data;
     }
 
-    static function getAllproducts() {
+    static function getAllproducts($limit=100, $offset=0) {
         $products = get_posts([
-            'post_type' => ['product'],
-            'numberposts' => -1,
+            'post_type' => ['product', 'product_variation'],
+            'posts_per_page' => $limit,
+            'offset' => $offset,
             'post_status' => 'publish',
         ]);
-
+        
         return $products;
     }
 

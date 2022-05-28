@@ -190,7 +190,10 @@ class RestRoutes_Controller extends WP_REST_Controller
     }
 
     public function exportProducts(WP_REST_Request $request) {
-        $products = Helpers::getAllproducts();
+        $limit = (isset($_GET['limit']) ? (int) $_GET['limit'] : 100);
+        $offset = (isset($_GET['offset']) ? (int) $_GET['offset'] : 0);
+
+        $products = Helpers::getAllproducts($limit, $offset);
 
         $product_data = [];
 
@@ -198,28 +201,16 @@ class RestRoutes_Controller extends WP_REST_Controller
             $product_sku = \get_post_meta($product->ID, '_sku', true);
             $woo_product = wc_get_product( $product->ID );
 
-            if ($woo_product->is_type('simple')) {
-                $product_type = 'simple';
-                $product_data[] = Helpers::getProductData($product->ID);
-            } elseif ($woo_product->is_type('variable')) {
-                $product_type = 'variable';
-                $product_data[] = Helpers::getProductData($product->ID);
-
-                $product_variation = get_posts([
-                    'post_type' => ['product_variation'],
-                    'numberposts' => -1,
-                    'post_status' => 'publish',
-                    'post_parent' => $product->ID
-                ]);
-
-                foreach ($product_variation as $variation) {
-                    $product_data[] = Helpers::getProductData($variation->ID);
-                }
-            }
+            $product_data[] = Helpers::getProductData($product->ID);
         }
 
         return new WP_REST_Response([
             'content' => $product_data,
+            'pagination' => [
+                'limit' => $limit,
+                'offset' => $offset,
+                'found' => count($product_data)
+            ]
         ]);
     }
 
