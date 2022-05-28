@@ -82,7 +82,7 @@ class RestRoutes_Controller extends WP_REST_Controller
             $setting = get_option(self::OPTION_NAME);
             $beartoken = str_replace('Bearer ', '', $beartoken);
 
-            if ($setting['webhook_key'] !== $beartoken) {
+            if ($setting['wordpress_access_key'] !== $beartoken) {
                 return new WP_REST_Response([
                     'msg' => 'Beartoken access key is not valid'
                 ], 403);
@@ -125,7 +125,7 @@ class RestRoutes_Controller extends WP_REST_Controller
             $setting = get_option(self::OPTION_NAME);
             $beartoken = str_replace('Bearer ', '', $beartoken);
 
-            if ($setting['webhook_key'] !== $beartoken) {
+            if ($setting['wordpress_access_key'] !== $beartoken) {
                 return new WP_REST_Response([
                     'msg' => 'Beartoken access key is not valid'
                 ], 403);
@@ -189,6 +189,25 @@ class RestRoutes_Controller extends WP_REST_Controller
     }
 
     public function exportProducts(WP_REST_Request $request) {
+        $beartoken = $request->get_header('Authorization');
+
+        # Token access check
+        if (!$beartoken) {
+            return new WP_REST_Response([
+                'msg' => 'Beartoken access key is not valid'
+            ], 403);
+        } else {
+            $setting = get_option(self::OPTION_NAME);
+            $beartoken = str_replace('Bearer ', '', $beartoken);
+
+            if ($setting['wordpress_access_key'] !== $beartoken) {
+                return new WP_REST_Response([
+                    'msg' => 'Beartoken access key is not valid'
+                ], 403);
+            }
+        }
+
+
         $limit = (isset($_GET['limit']) ? (int) $_GET['limit'] : 100);
         $offset = (isset($_GET['offset']) ? (int) $_GET['offset'] : 0);
 
@@ -213,7 +232,26 @@ class RestRoutes_Controller extends WP_REST_Controller
         ]);
     }
 
-    public function exportOrders() {
+    public function exportOrders(WP_REST_Request $request) {
+        $beartoken = $request->get_header('Authorization');
+
+        # Token access check
+        if (!$beartoken) {
+            return new WP_REST_Response([
+                'msg' => 'Beartoken access key is not valid'
+            ], 403);
+        } else {
+            $setting = get_option(self::OPTION_NAME);
+            $beartoken = str_replace('Bearer ', '', $beartoken);
+
+            if ($setting['wordpress_access_key'] !== $beartoken) {
+                return new WP_REST_Response([
+                    'msg' => 'Beartoken access key is not valid'
+                ], 403);
+            }
+        }
+
+
         $limit = (isset($_GET['limit']) ? (int) $_GET['limit'] : 100);
         $offset = (isset($_GET['offset']) ? (int) $_GET['offset'] : 0);
 
