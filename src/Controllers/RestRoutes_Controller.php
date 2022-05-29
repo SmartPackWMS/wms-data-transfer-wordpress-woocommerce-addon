@@ -221,13 +221,21 @@ class RestRoutes_Controller extends WP_REST_Controller
 
             $product_data[] = Helpers::getProductData($product->ID);
         }
-
+        
+        if (!isset($_GET['ignoreCount'])) {
+            $products_count = wp_count_posts( $post_type = 'product' );
+            $product_variation_count = wp_count_posts( $post_type = 'product_variation' );
+            $product_found = ($products_count->publish + $product_variation_count->publish);
+        } else {
+            $product_found = null;
+        }
+        
         return new WP_REST_Response([
             'content' => $product_data,
             'pagination' => [
                 'limit' => $limit,
                 'offset' => $offset,
-                'found' => count($product_data)
+                'found' => $product_found
             ]
         ]);
     }
