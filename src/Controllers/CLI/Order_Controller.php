@@ -29,7 +29,7 @@ class CLI_Orders
         foreach ($all_ids as $order) {
             $shipment_data = [[
                 'method' => 'order',
-                'data' => Helpers::getOrderData($order->ID)
+                'data' => Helpers::getOrderData($order->ID, $order)
             ]];
 
             $response = $webhook->push($shipment_data);

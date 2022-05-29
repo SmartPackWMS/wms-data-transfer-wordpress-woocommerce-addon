@@ -4,34 +4,10 @@ namespace SmartPack\WMS\Controllers\CLI;
 
 use Exception;
 use SmartPack\WMS\WMSApi\Webhook;
+use SmartPack\WMS\Helpers;
 
 class CLI_Products
 {
-    function __get_product_data_simple($product_id) {
-        $wc_product_data = \wc_get_product( $product_id );
-        $image_id  = $wc_product_data->get_image_id();
-        $image_url = \wp_get_attachment_image_url( $image_id, 'full' );
-        
-        $obj_product = Helpers::getProtectedValue($wc_product_data, 'data');
-        
-        $product_data = [
-            'method' => 'product',
-            'data' => [
-                'id' => (string) $product_id,
-                'sku' => $obj_product['sku'],
-                'title' => $obj_product['name'],
-                'description' => $obj_product['description'],
-                'cost' => $obj_product['price'],
-                'vendor' => '',
-                'manufacturer' => '',
-                'weight' => $obj_product['weight'],
-                'imageUrl' => $image_url
-            ]
-        ];
-
-        return $product_data;
-    }
-
     function execute()
     {
         echo 'Start product sync';
