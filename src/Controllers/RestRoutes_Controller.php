@@ -8,6 +8,8 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
+use SmartPack\WMS\Helpers;
+
 class RestRoutes_Controller extends WP_REST_Controller
 {
     const PLUGIN_PREFIX = 'smartpack-wms';
@@ -17,6 +19,8 @@ class RestRoutes_Controller extends WP_REST_Controller
     const ROUTES = [
         'stockChanged'      => '/stock-changed',
         'orderChanged'      => '/order-changed',
+        'exportProducts'      => '/export/products',
+        'exportOrders'      => '/export/orders',
     ];
 
     public static function get_route_namespace(): string
@@ -26,21 +30,40 @@ class RestRoutes_Controller extends WP_REST_Controller
 
     public function register_routes()
     {
+        // register_rest_route(
+        //     self::get_route_namespace(),
+        //     self::ROUTES['stockChanged'],
+        //     [
+        //         'methods'             => WP_REST_Server::CREATABLE,
+        //         'callback'            => [$this, 'stockChanged']
+        //     ]
+        // );
+
+        // register_rest_route(
+        //     self::get_route_namespace(),
+        //     self::ROUTES['orderChanged'],
+        //     [
+        //         'methods'             => WP_REST_Server::CREATABLE,
+        //         'callback'            => [$this, 'orderChanged']
+        //     ]
+        // );
+
+
         register_rest_route(
             self::get_route_namespace(),
-            self::ROUTES['stockChanged'],
+            self::ROUTES['exportProducts'],
             [
-                'methods'             => WP_REST_Server::CREATABLE,
-                'callback'            => [$this, 'stockChanged']
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => [$this, 'exportProducts']
             ]
         );
 
         register_rest_route(
             self::get_route_namespace(),
-            self::ROUTES['orderChanged'],
+            self::ROUTES['exportOrders'],
             [
-                'methods'             => WP_REST_Server::CREATABLE,
-                'callback'            => [$this, 'orderChanged']
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => [$this, 'exportOrders']
             ]
         );
     }
@@ -59,7 +82,7 @@ class RestRoutes_Controller extends WP_REST_Controller
             $setting = get_option(self::OPTION_NAME);
             $beartoken = str_replace('Bearer ', '', $beartoken);
 
-            if ($setting['webhook_key'] !== $beartoken) {
+            if ($setting['wordpress_access_key'] !== $beartoken) {
                 return new WP_REST_Response([
                     'msg' => 'Beartoken access key is not valid'
                 ], 403);
@@ -102,7 +125,7 @@ class RestRoutes_Controller extends WP_REST_Controller
             $setting = get_option(self::OPTION_NAME);
             $beartoken = str_replace('Bearer ', '', $beartoken);
 
-            if ($setting['webhook_key'] !== $beartoken) {
+            if ($setting['wordpress_access_key'] !== $beartoken) {
                 return new WP_REST_Response([
                     'msg' => 'Beartoken access key is not valid'
                 ], 403);
@@ -163,6 +186,81 @@ class RestRoutes_Controller extends WP_REST_Controller
         return new WP_REST_Response([
             'content' => $order_updated
         ]);
+    }
+
+    public function exportProducts(WP_REST_Request $request) {
+        $beartoken = $request->get_header('Authorization');
+
+        # Token access check
+        if (!$beartoken) {
+            return new WP_REST_Response([
+                'msg' => 'Beartoken access key is not valid'
+            ], 403);
+        } else {
+            $setting = get_option(self::OPTION_NAME);
+            $beartoken = str_replace('Bearer ', '', $beartoken);
+
+            if ($setting['wordpress_access_key'] !== $beartoken) {
+                return new WP_REST_Response([
+                    'msg' => 'Beartoken access key is not valid'
+                ], 403);
+            }
+        }
+
+
+        $limit = (isset($_GET['limit']) ? (int) $_GET['limit'] : 100);
+        $offset = (isset($_GET['offset']) ? (int) $_GET['offset'] : 0);
+
+        $products = Helpers::getAllproducts($limit, $offset);
+
+        $product_data = [];
+
+        foreach ($products as $product) {
+            $product_sku = \get_post_meta($product->ID, '_sku', true);
+            $woo_product = wc_get_product( $product->ID );
+
+            $product_data[] = Helpers::getProductData($product->ID);
+        }
+
+        return new WP_REST_Response([
+            'content' => $product_data,
+            'pagination' => [
+                'limit' => $limit,
+                'offset' => $offset,
+                'found' => count($product_data)
+            ]
+        ]);
+    }
+
+    public function exportOrders(WP_REST_Request $request) {
+        $beartoken = $request->get_header('Authorization');
+
+        # Token access check
+        if (!$beartoken) {
+            return new WP_REST_Response([
+                'msg' => 'Beartoken access key is not valid'
+            ], 403);
+        } else {
+            $setting = get_option(self::OPTION_NAME);
+            $beartoken = str_replace('Bearer ', '', $beartoken);
+
+            if ($setting['wordpress_access_key'] !== $beartoken) {
+                return new WP_REST_Response([
+                    'msg' => 'Beartoken access key is not valid'
+                ], 403);
+            }
+        }
+
+
+        $limit = (isset($_GET['limit']) ? (int) $_GET['limit'] : 100);
+        $offset = (isset($_GET['offset']) ? (int) $_GET['offset'] : 0);
+
+        $order_data = [];
+        foreach (Helpers::getAllOrders($limit, $offset) as $order) {
+            $order_data[] = Helpers::getOrderData($order->ID, $order);
+        }
+
+        return $order_data;
     }
 
     public function init()

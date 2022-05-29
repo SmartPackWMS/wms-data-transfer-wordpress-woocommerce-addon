@@ -1,5 +1,4 @@
 <?php
-
 namespace SmartPack\WMS\Controllers;
 
 use SmartPack\WMS\Controllers\CLI\CLI_Products;
@@ -8,12 +7,19 @@ use DateTime;
 
 class WPInit_Controller
 {
+    function wmsCronProductHook() {
+        $product_cli = new CLI_Products();
+        $product_cli->execute();
+    }
+    
+    function wmsCronOrderHook() {
+        $order_cli = new CLI_Orders();
+        $order_cli->execute();
+    }
+
     private function __crontabEventsProductHook()
     {
-        add_action('wms_cron_product_hook', function () {
-            $product_cli = new CLI_Products();
-            $product_cli->execute();
-        });
+        add_action('wms_cron_product_hook', [ $this, 'wmsCronProductHook' ]);
 
         register_deactivation_hook(__FILE__, function () {
             $timestamp = wp_next_scheduled('wms_cron_product_hook');
@@ -29,10 +35,7 @@ class WPInit_Controller
 
     private function __crontabEventsOrderHook()
     {
-        add_action('wms_cron_order_hook', function () {
-            $order_cli = new CLI_Orders();
-            $order_cli->execute();
-        });
+        add_action('wms_cron_order_hook',  [ $this, 'wmsCronOrderHook' ]);
 
         register_deactivation_hook(__FILE__, function () {
             $timestamp = wp_next_scheduled('wms_cron_order_hook');
@@ -75,32 +78,43 @@ class WPInit_Controller
         // Order Status Change
         add_action('woocommerce_order_status_pending', function ($order_id) {
             // pending
+            update_post_meta($order_id, 'smartpack_wms_state', 'pending');
+            update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
         add_action('woocommerce_order_status_failed', function ($order_id) {
             // failed
+            update_post_meta($order_id, 'smartpack_wms_state', 'pending');
+            update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
 
         add_action('woocommerce_order_status_on-hold', function ($order_id) {
             // on-hold
+            update_post_meta($order_id, 'smartpack_wms_state', 'pending');
+            update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
 
         add_action('woocommerce_order_status_processing', function ($order_id) {
+            // processing
             update_post_meta($order_id, 'smartpack_wms_state', 'pending');
-            update_post_meta($order_id, 'smartpack_wms_order_state', 'pending');
-            update_post_meta($order_id, 'smartpack_wc_order_state', 'processing');
             update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
 
         add_action('woocommerce_order_status_completed', function ($order_id) {
             // completed
+            update_post_meta($order_id, 'smartpack_wms_state', 'pending');
+            update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
 
         add_action('woocommerce_order_status_refunded', function ($order_id) {
             // refunded
+            update_post_meta($order_id, 'smartpack_wms_state', 'pending');
+            update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
 
         add_action('woocommerce_order_status_cancelled', function ($order_id) {
             // cancelled
+            update_post_meta($order_id, 'smartpack_wms_state', 'pending');
+            update_post_meta($order_id, 'smartpack_wms_changed', new DateTime());
         });
     }
 
